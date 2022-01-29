@@ -9,8 +9,11 @@ from machine import Pin
 from time import sleep
 
 # Define neopixel pins and amount
-pixel_pin=4
+pixel_pin=4 #D2
 pixel_num=50
+
+# Our toggle button is on pin 5 - D1
+button = Pin(5, Pin.IN, Pin.PULL_UP)
 
 # Switch off the internal LED
 int_led=Pin(2,Pin.OUT)
@@ -27,9 +30,6 @@ def np_on(np,num_pixels,rot,colours):
     for pixel in range(num_pixels):
         np[pixel]=colours[rot]
     np.write()
-
-# Our toggle button is on pin 5
-button = Pin(5, Pin.IN, Pin.PULL_UP)
 
 # Start from colours=0
 rgb_rot=0
