@@ -10,7 +10,7 @@ from time import sleep
 
 # Define neopixel pins and amount
 pixel_pin=4 #D2
-pixel_num=50
+pixel_num=10
 
 # Our toggle button is on pin 5 - D1
 button = Pin(5, Pin.IN, Pin.PULL_UP)
@@ -23,7 +23,7 @@ int_led(1)
 np = neopixel.NeoPixel(machine.Pin(pixel_pin), pixel_num)
 
 # Define colour list
-colours=[(0,0,0),(127,0,255),(99,3,48),(0,100,0),(0,0,100),(100,0,0)]
+colours=[(0,0,0),(255, 0, 255),(255,255,0),(0,255,0),(0,0,255),(255,0,0)]
 
 # Function to set neopixel string to 1 colour out of colours list defined by rot
 def np_on(np,num_pixels,rot,colours):

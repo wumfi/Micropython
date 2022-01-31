@@ -3,7 +3,7 @@ from Pico_ePaper_partial import Eink
 from writer import Writer
 from utime import sleep_ms,gmtime
 from ntptime import settime
-from machine import deepsleep
+from machine import reset
 from network import WLAN,STA_IF
 from sys import path
 from time import time,localtime
@@ -20,23 +20,6 @@ path.append("/icons")
 path.append("/fonts")
 import ClearNight,Hot,Sun,CloudyNight,PartialCloud,Warm,Cold,Rain,Drizzle,Windy,Freezing,Snow,FullCloud,Storm,Foggy
 import dinomouse20, dinomouse30, dinomouse40, freesans20
-
-def ConnectToWifi():
-    sta_if = WLAN(STA_IF)
-    if not sta_if.isconnected():
-        print('connecting to network...')
-        sta_if.active(True)
-        sta_if.connect(ssid, pwd)
-        while not sta_if.isconnected():
-            pass
-    settime()
-    print('network config:', sta_if.ifconfig())
-
-def ShutdownWifi():
-    wifi = WLAN(STA_IF)
-    wifi.active(False)
-    print("Network diconnected")
-
 debugflag=1
 
 class DummyDevice(FrameBuffer):
@@ -94,8 +77,14 @@ def wimage(epd,icon,x=None,y=None,xoffset=None,xwidth=None,yoffset=None,yheight=
 
 def GetWeather():
     global WeatherJSON
-    response = get("http://api.openweathermap.org/data/2.5/onecall?lat=50.967779&lon=-0.114799&appid="+apiKey+"&units=metric")
-    WeatherJSON=loads(response.content)
+    try:
+        response = get("http://api.openweathermap.org/data/2.5/onecall?lat=50.967779&lon=-0.114799&appid="+apiKey+"&units=metric")
+    except:
+        print("Get failed")
+    try:
+        WeatherJSON=loads(response.content)
+    except:
+        print("Issue with WeatherJSON")
 
 def GetSuffix(daynum):
     #last=daynum[-1]
@@ -231,10 +220,12 @@ def GetFriendlyTime(dt):
 
 def UpdateEPD(epd):
     GetWeather()
+    epd.partial_mode_on()
     epd.fill()
     SetBackground(epd)
     SetTopPane(epd) 
     SetLeftPane(epd)
     SetMainPane(epd)
     epd.show()
+    epd.partial_mode_off()
     #epd.sleep()
